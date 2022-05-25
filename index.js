@@ -15,6 +15,21 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
+// VERIFY TOKEN
+const verifyJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send({ info: "invalid user" });
+  }
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
+    if (err) {
+      return res.status(403).send({ info: "invalid user" });
+    }
+    req.decoded = decoded;
+    next();
+  });
+};
 const run = async () => {
   try {
     await client.connect();
@@ -39,7 +54,7 @@ const run = async () => {
 };
 
 run().catch(console.dir);
-app.get("/", (req, res) => {
+app.get("/", verifyJWT, (req, res) => {
   res.send("HELLO WORLD FROM NODE JS || EXPRESS");
 });
 
