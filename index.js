@@ -29,7 +29,10 @@ const run = async () => {
         $set: user,
       };
       const result = await userCollection.updateOne(filter, updateDoc, options);
-      req.send(result);
+      const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, {
+        expiresIn: 60 * 60,
+      });
+      res.send({ result, accessToken: token });
     });
   } finally {
   }
