@@ -20,7 +20,17 @@ const run = async () => {
     await client.connect();
     const userCollection = client.db("userCollection").collection("user");
     // UPDATE USER INFORMATION
-    app.put("/user/:email", async (req, rew) => {});
+    app.put("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: user,
+      };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      req.send(result);
+    });
   } finally {
   }
 };
