@@ -37,6 +37,13 @@ const run = async () => {
     const componentCollection = client
       .db("componentCollection")
       .collection("component");
+    // GET PRODUCTS FROM DATABASE
+    app.get("/product", async (request, response) => {
+      const query = {};
+      const cursor = componentCollection.find(query);
+      const result = await cursor.toArray();
+      response.send(result);
+    });
     // UPDATE USER INFORMATION
     app.put("/user/:email", async (req, res) => {
       const email = req.params.email;
