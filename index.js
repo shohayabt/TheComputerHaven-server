@@ -34,6 +34,9 @@ const run = async () => {
   try {
     await client.connect();
     const userCollection = client.db("userCollection").collection("user");
+    const componentCollection = client
+      .db("componentCollection")
+      .collection("component");
     // UPDATE USER INFORMATION
     app.put("/user/:email", async (req, res) => {
       const email = req.params.email;
@@ -48,6 +51,12 @@ const run = async () => {
         expiresIn: 60 * 60,
       });
       res.send({ result, accessToken: token });
+    });
+    // POST DATA TO DATA BASE
+    app.post("/products", async (req, res) => {
+      const products = req.body;
+      const result = await componentCollection.insertOne(products);
+      res.send(result);
     });
   } finally {
   }
