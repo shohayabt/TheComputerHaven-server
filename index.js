@@ -37,10 +37,17 @@ const run = async () => {
     const componentCollection = client
       .db("componentCollection")
       .collection("component");
+    const reviewCollection = client.db("reviewCollection").collection("review");
     // GET PRODUCTS FROM DATABASE
     app.get("/product", async (request, response) => {
       const query = {};
       const cursor = componentCollection.find(query);
+      const result = await cursor.toArray();
+      response.send(result);
+    });
+    app.get("/review", async (request, response) => {
+      const query = {};
+      const cursor = reviewCollection.find(query);
       const result = await cursor.toArray();
       response.send(result);
     });
@@ -63,6 +70,12 @@ const run = async () => {
     app.post("/products", async (req, res) => {
       const products = req.body;
       const result = await componentCollection.insertOne(products);
+      res.send(result);
+    });
+    // POST REVIEWS TO DATA BASE
+    app.post("/reviews", async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
       res.send(result);
     });
   } finally {
