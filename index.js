@@ -72,6 +72,18 @@ const run = async () => {
       const result = await componentCollection.insertOne(products);
       res.send(result);
     });
+    // UPDATE TOTAL
+    app.put("/updateUser/:email", async (req, res) => {
+      const email = req.params.email;
+      const updateUser = req.body;
+      const query = { email: email };
+      const options = { upsert: false };
+      const updatedDoc = {
+        $set: updateUser,
+      };
+      const result = await userCollection.updateOne(query, updatedDoc, options);
+      res.send(result);
+    });
     // POST REVIEWS TO DATA BASE
     app.post("/reviews", async (req, res) => {
       const review = req.body;
