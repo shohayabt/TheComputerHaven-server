@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cros = require("cors");
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 app.use(cros());
 const jwt = require("jsonwebtoken");
@@ -45,13 +45,21 @@ const run = async () => {
       const result = await cursor.toArray();
       response.send(result);
     });
+    // GET ALL USERS
+    app.get("/users", async (request, response) => {
+      const query = {};
+      const cursor = userCollection.find(query);
+      const result = await cursor.toArray();
+      response.send(result);
+    });
+    // GET ALL REVIEWS
     app.get("/review", async (request, response) => {
       const query = {};
       const cursor = reviewCollection.find(query);
       const result = await cursor.toArray();
       response.send(result);
     });
-    // UPDATE USER INFORMATION
+    // SIGNUP WITH JWT TOKEN
     app.put("/user/:email", async (req, res) => {
       const email = req.params.email;
       const user = req.body;
@@ -66,13 +74,7 @@ const run = async () => {
       });
       res.send({ result, accessToken: token });
     });
-    // POST DATA TO DATA BASE
-    app.post("/products", async (req, res) => {
-      const products = req.body;
-      const result = await componentCollection.insertOne(products);
-      res.send(result);
-    });
-    // UPDATE TOTAL
+    // UPDATE USER
     app.put("/updateUser/:email", async (req, res) => {
       const email = req.params.email;
       const updateUser = req.body;
@@ -83,6 +85,35 @@ const run = async () => {
       };
       const result = await userCollection.updateOne(query, updatedDoc, options);
       res.send(result);
+    });
+    // POST DATA TO DATA BASE
+    app.post("/products", async (req, res) => {
+      const products = req.body;
+      const result = await componentCollection.insertOne(products);
+      res.send(result);
+    });
+    // MAKE ADMIN
+    app.put("/makeAdmin/:id", verifyJWT, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const requester = req.decoded.email;
+      const requesterAccount = await userCollection.findOne({
+        email: requester,
+      });
+      if (requesterAccount.isAdmin === true) {
+        const options = { upsert: false };
+        const updatedDoc = {
+          $set: { isAdmin: true },
+        };
+        const result = await userCollection.updateOne(
+          query,
+          updatedDoc,
+          options
+        );
+        res.send(result);
+      } else {
+        res.status(403).send({ info: "you have no permission to make admin" });
+      }
     });
     // POST REVIEWS TO DATA BASE
     app.post("/reviews", async (req, res) => {
