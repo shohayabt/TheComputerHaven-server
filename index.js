@@ -47,6 +47,13 @@ const run = async () => {
       const result = await cursor.toArray();
       response.send(result);
     });
+    // MY ORDERS
+    app.get("/myorder", async (request, response) => {
+      const query = {};
+      const cursor = orderCollection.find(query);
+      const result = await cursor.toArray();
+      response.send(result);
+    });
     //GET ONE PRODUCT
     app.get("/tool/:id", async (req, res) => {
       const id = req.params.id;
@@ -151,6 +158,20 @@ const run = async () => {
     app.post("/reviews", async (req, res) => {
       const review = req.body;
       const result = await reviewCollection.insertOne(review);
+      res.send(result);
+    });
+    // DELETE ORDER
+    app.delete("/removeOrder/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await orderCollection.deleteOne(query);
+      res.send(result);
+    });
+    //REMOVE USER
+    app.delete("/removeUser/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
       res.send(result);
     });
   } finally {
