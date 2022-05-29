@@ -35,11 +35,25 @@ const run = async () => {
   try {
     await client.connect();
     const userCollection = client.db("userCollection").collection("user");
+    const orderCollection = client.db("orderCollection").collection("order");
     const componentCollection = client
       .db("componentCollection")
       .collection("component");
     const reviewCollection = client.db("reviewCollection").collection("review");
     // GET PRODUCTS FROM DATABASE
+    app.get("/product", async (request, response) => {
+      const query = {};
+      const cursor = componentCollection.find(query);
+      const result = await cursor.toArray();
+      response.send(result);
+    });
+    //GET ONE PRODUCT
+    app.get("/tool/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await componentCollection.findOne(query);
+      res.send(result);
+    });
     app.get("/product", async (request, response) => {
       const query = {};
       const cursor = componentCollection.find(query);
@@ -97,6 +111,12 @@ const run = async () => {
       };
       const result = await userCollection.updateOne(query, updatedDoc, options);
       res.send(result);
+    });
+    // POST ORDER
+    app.post("/order", async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
+      res.send({ success: true, result });
     });
     // POST DATA TO DATA BASE
     app.post("/products", async (req, res) => {
