@@ -58,7 +58,7 @@ const run = async () => {
       const email = req.params.email;
       const user = await userCollection.findOne({ email: email });
       console.log(user);
-      const isAdmin = user.isAdmin == true;
+      const isAdmin = user?.isAdmin == true;
       console.log(isAdmin);
       const result = { admin: isAdmin };
       console.log(result);
