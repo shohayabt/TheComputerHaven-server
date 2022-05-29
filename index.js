@@ -56,9 +56,13 @@ const run = async () => {
     // GET ALL ADMIN
     app.get("/admin/:email", async (req, res) => {
       const email = req.params.email;
-      const user = userCollection.find({ email: email });
-      const isAdmin = user.isAdmin === true;
-      res.send({ admin: true });
+      const user = await userCollection.findOne({ email: email });
+      console.log(user);
+      const isAdmin = user.isAdmin == true;
+      console.log(isAdmin);
+      const result = { admin: isAdmin };
+      console.log(result);
+      res.send(result);
     });
     // GET ALL REVIEWS
     app.get("/review", async (request, response) => {
