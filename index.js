@@ -6,6 +6,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 app.use(cros());
 const jwt = require("jsonwebtoken");
+const res = require("express/lib/response");
 app.use(express.json());
 require("dotenv").config();
 
@@ -51,6 +52,13 @@ const run = async () => {
       const cursor = userCollection.find(query);
       const result = await cursor.toArray();
       response.send(result);
+    });
+    // GET ALL ADMIN
+    app.get("/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const user = userCollection.find({ email: email });
+      const isAdmin = user.isAdmin === true;
+      res.send({ admin: true });
     });
     // GET ALL REVIEWS
     app.get("/review", async (request, response) => {
