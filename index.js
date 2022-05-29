@@ -61,12 +61,6 @@ const run = async () => {
       const result = await componentCollection.findOne(query);
       res.send(result);
     });
-    app.get("/product", async (request, response) => {
-      const query = {};
-      const cursor = componentCollection.find(query);
-      const result = await cursor.toArray();
-      response.send(result);
-    });
     // GET ALL USERS
     app.get("/users", async (request, response) => {
       const query = {};
