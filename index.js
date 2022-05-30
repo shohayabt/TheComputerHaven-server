@@ -51,8 +51,8 @@ const run = async () => {
     app.get("/myorder/:userEmail", async (request, response) => {
       const email = request.params.userEmail;
       const query = { email: email };
-      const result = await orderCollection.findOne(query);
-      console.log(result);
+      const cursor = orderCollection.find(query);
+      const result = await cursor.toArray();
       response.send(result);
     });
     //GET ONE PRODUCT
