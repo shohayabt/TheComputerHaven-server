@@ -48,10 +48,11 @@ const run = async () => {
       response.send(result);
     });
     // MY ORDERS
-    app.get("/myorder", async (request, response) => {
-      const query = {};
-      const cursor = orderCollection.find(query);
-      const result = await cursor.toArray();
+    app.get("/myorder/:userEmail", async (request, response) => {
+      const email = request.params.userEmail;
+      const query = { email: email };
+      const result = await orderCollection.findOne(query);
+      console.log(result);
       response.send(result);
     });
     //GET ONE PRODUCT
